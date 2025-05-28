@@ -50,7 +50,8 @@ def predict():
                 "error": "Invalid input",
                 "message": "Please provide 'features' in JSON format"
             }), 400
-        
+              # Extract features from the data
+        features = data['features']
         # Validate input - breast cancer dataset has 30 features
         if len(features) != 30:
             return jsonify({
