@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import os
+import warnings
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
@@ -50,8 +51,10 @@ def predict():
                 "error": "Invalid input",
                 "message": "Please provide 'features' in JSON format"
             }), 400
-              # Extract features from the data
+        
+        # Extract features from the data
         features = data['features']
+        
         # Validate input - breast cancer dataset has 30 features
         if len(features) != 30:
             return jsonify({
@@ -62,8 +65,10 @@ def predict():
         # Convert to numpy array and reshape for single prediction
         features_array = np.array(features).reshape(1, -1)
         
-        # Apply scaling (required for your model)
-        features_scaled = scaler.transform(features_array)
+        # Apply scaling (suppress the feature names warning since it doesn't affect functionality)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UserWarning)
+            features_scaled = scaler.transform(features_array)
         
         # Make prediction on scaled features
         prediction = model.predict(features_scaled)[0]
